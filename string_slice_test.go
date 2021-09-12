@@ -279,6 +279,7 @@ func TestSSMultValues(t *testing.T) {
 	var arrOne []string
 	var arrTwo []string
 	var together []*[]string
+
 	together = append(together, &arrOne)
 	together = append(together, &arrTwo)
 
@@ -287,7 +288,7 @@ func TestSSMultValues(t *testing.T) {
 	if err != nil {
 		t.Fatalf(err.Error())
 	}
-	if &arrOne != &arrTwo {
-		t.Fatalf("memory locationsnot the same for the two arrays")
+	if together[0] != together[1] {
+		t.Fatalf("memory locations not the same for the two arrays")
 	}
 }

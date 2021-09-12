@@ -146,15 +146,14 @@ func (f *FlagSet) StringSliceVarMult(pointers []*[]string, name string, value []
 	if len(pointers) < 2 {
 		return errors.New("must pass at least two pointers to string arrays")
 	}
+	CommandLine.VarP(newStringSliceValue(value, pointers[0]), name, "", usage)
 	mainPointer := pointers[0]
-	pointers = append(pointers[1:])
-	for _, point := range pointers {
-		if point == mainPointer {
+	for i := range pointers {
+		if pointers[i] == mainPointer {
 			continue
 		}
-		point = mainPointer
+		pointers[i] = mainPointer
 	}
-	CommandLine.VarP(newStringSliceValue(value, pointers[0]), name, "", usage)
 	return nil
 }
 
