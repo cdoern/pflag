@@ -3,6 +3,7 @@ package pflag
 import (
 	"bytes"
 	"encoding/csv"
+	"errors"
 	"strings"
 )
 
@@ -137,6 +138,24 @@ func (f *FlagSet) StringSlice(name string, value []string, usage string) *[]stri
 	p := []string{}
 	f.StringSliceVarP(&p, name, "", value, usage)
 	return &p
+}
+
+// StringSliceVarMult functions similarly to StringSlice but allows the user to place the value of the flag in multiple pointers
+// this is useful in applications where flags are inherited from a parent entity
+func (f *FlagSet) StringSliceVarMult(pointers []*[]string, name string, value []string, usage string) error {
+	if len(pointers) < 2 {
+		return errors.New("must pass at least two pointers to string arrays")
+	}
+	mainPointer := pointers[0]
+	pointers = append(pointers[1:])
+	for _, point := range pointers {
+		if point == mainPointer {
+			continue
+		}
+		point = mainPointer
+	}
+	CommandLine.VarP(newStringSliceValue(value, pointers[0]), name, "", usage)
+	return nil
 }
 
 // StringSliceP is like StringSlice, but accepts a shorthand letter that can be used after a single dash.
